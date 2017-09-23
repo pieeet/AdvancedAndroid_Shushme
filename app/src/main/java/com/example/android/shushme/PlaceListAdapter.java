@@ -23,17 +23,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+
+import static android.media.CamcorderProfile.get;
+
 public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.PlaceViewHolder> {
 
     private Context mContext;
+    private PlaceBuffer mPlaces;
+
 
     /**
      * Constructor using the context and the db cursor
      *
      * @param context the calling context/activity
      */
-    public PlaceListAdapter(Context context) {
+    public PlaceListAdapter(Context context, PlaceBuffer placeBuffer) {
         this.mContext = context;
+        mPlaces = placeBuffer;
     }
 
     /**
@@ -60,6 +68,14 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.Plac
     @Override
     public void onBindViewHolder(PlaceViewHolder holder, int position) {
 
+        Place place = mPlaces.get(position);
+        holder.addressTextView.setText(place.getAddress().toString());
+        holder.nameTextView.setText(place.getName());
+    }
+
+    public void swapPlaces(PlaceBuffer placeBuffer) {
+        mPlaces = placeBuffer;
+        notifyDataSetChanged();
     }
 
 
@@ -70,7 +86,8 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.Plac
      */
     @Override
     public int getItemCount() {
-        return 0;
+        if (mPlaces == null) return 0;
+        return mPlaces.getCount();
     }
 
     /**
